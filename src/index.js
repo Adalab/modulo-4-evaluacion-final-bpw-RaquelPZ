@@ -44,7 +44,7 @@ async function getConnection() {
     res.json(resultado);
  });
 
-//GET - Lista de frases (con info pj y titulo del capitulo) -
+//GET - List of phrases (with character info and title) -
 server.get('/api/frases', async (req, res) => {
     const conn = await getConnection();
     const [resultado] = await conn.query(`
@@ -59,19 +59,7 @@ server.get('/api/frases', async (req, res) => {
     res.json(resultado);
 });
 
-//GET - Obtener una frase específica (frase de lisa) -
-server.get('/api/frases/12', async (req, res) => {
-    const conn = await getConnection();
-    const [resultado] = await conn.query(`
-        SELECT texto
-            FROM frases 
-                WHERE id = 12;`
-    );
-    await conn.end();
-    res.json(resultado);
-});
-
-//GET - Obtener una frase específica
+//GET - Get a specific phrase
 server.get('/api/frases/:id', async (req, res) => {
     const conn = await getConnection();
     const [resultado] = await conn.query(`
@@ -84,7 +72,7 @@ server.get('/api/frases/:id', async (req, res) => {
     res.json(resultado);
 });
 
-//PUT - Actualizar frase existente -
+//PUT - Update existing phrase -
 server.put('/api/frases/:id', async (req, res) => {
     const conn = await getConnection();
     const [resultado] = await conn.execute(`
@@ -97,7 +85,7 @@ server.put('/api/frases/:id', async (req, res) => {
     res.json(resultado);
 });
 
-//DELETE - Borrar una frase -
+//DELETE - Delete a sentence -
 server.delete('/api/frases/:id', async (req, res) => {
     const conn = await getConnection();
     const [resultado] = await conn.execute(`

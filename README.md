@@ -1,105 +1,182 @@
-# Pasos para crear un servidor Express
+# 📡 Servidor Express con MySQL – Guía Paso a Paso
 
-1. Crear una carpeta donde irá el proyecto.
+Este proyecto configura un servidor API RESTful con Node.js, Express y una base de datos MySQL. A continuación se detallan los pasos para crear y ejecutar el servidor correctamente.
 
-2. Abrir la carpeta
+---
 
-3. Lanzar el comando `npm init` y contestar a sus preguntas.
-   - En entrypoint vamos a poner `src/index.js`
+## 🛠️ 1. Inicializar el proyecto
 
-4. Creamos la carpeta `/src/` y dentro el fichero `/src/index.js`.
-
-5. Editamos el `/package.json` y dentro de scripts añadimos estos dos:
-   - `"start": "node src/index.js"`
-   - `"dev": "node --watch src/index.js"`
-   - Acordáos de las comas al final de cada prop.
-   - No hace falta quitar el `"test"` de `"scripts"`.
-
-6. Instalamos las dependencias:
-
-   1. Instalamos, sí o sí, la biblioteca **Express**  como dependencia:
-      - `npm i express`
-
-   2. Si vamos a hacer endpoints que formen parte de un API RESTful, instalamos como dependencia **CORS**:
-      - `npm i cors`
-
-   3. Si necesitamos usar las tablas de una base de datos, instalamos como dependencia **MySQL2** y **dotEnv**:
-      - `npm i mysql2 dotenv`
-
-   4. Si queremos hacer endpoints para registro y login de usuarias, instalamos como dependencia **bCrypt** y **JsonWebToken**:
-      - `npm i bcrypt jsonwebtoken`
-
-   5. Si necesitamos usar un motor de plantillas (para hacer enpoints con ficheros dinámicos), instalamos como dependencia **EJS**:
-      - `npm i ejs`
-
-      > NOTA: Lo normal  será instalar:
-      > `npm i express cors mysql2 dotenv`
-
-7. Escribimos en el fichero `/src/index.js` el código de un servidor mínimo:
-
-   ```js
-   const express = require('express');
-
-   // Creamos una vari con el servidor
-   const server = express();
-
-   // SECCIÓN DE CONFIGURACIÓN DE SERVER
-
-   // Arrancamos el servidor en el puerto 4000
-   const port = 4000;
-   server.listen( port, () => {
-     console.log(`Servidor iniciado <http://localhost:${port}>`);  
-   });
-
-
-8. Arrancamos el servidor con `npm run dev` y abrimos una página en el navegador con la dirección `http://localhost:4000/` (¡no se abre ni se actualiza automáticamente como en React!)
-
-
-## Para configurar Express como servidor de APIS
-
-1. Importamos las bibliotecas **cors**, **mysql2** y **dotenv** al principio del fichero.
-
-   ```js
-   const cors = require('cors');
-   const mysql = require("mysql2/promise");
-   require("dotenv").config();
+1. Crea una carpeta para tu proyecto:
+   ```bash
+   mkdir mi-servidor-express
+   cd mi-servidor-express
    ```
 
-2. Añadioms la configuración para que el servidor Express pueda recibir peticiones de cualquier dirección e interprete el json que llega en el body de la petición (en la sección de configuración del server Express):
-
-   ```js
-   // Configuramos server para que funcione bien como API
-   server.use( cors() );
-   server.use( express.json({limit: '25Mb'}) );
+2. Inicializa el proyecto con NPM:
+   ```bash
+   npm init
    ```
 
-3. Creamos un fichero `/.env` en la carpeta raíz de nuestro proyecto con las 5 variables que definen la configuración de la conexión con la base de datos MySQL. Ponemos los valores de nuestra base de datos (de localhost o de Aiven) entre las comillas:
+   - Acepta las opciones por defecto o personaliza según necesites.
+   - En el campo `entry point`, escribe: `src/index.js`.
 
-   ```yaml
-   MYSQL_HOST=''
-   MYSQL_PORT='3306'
-   MYSQL_USER=''
-   MYSQL_PASSWORD=''
-   MYSQL_DATABASE=''
+3. Crea el archivo de entrada:
+   ```bash
+   mkdir src
+   touch src/index.js
    ```
 
-4. Creamos una función para crear una conexión y conectarnos a la base de datos:
+---
 
-   ```js
-   async function getConnection() {
-      const connData = {
-         host: process.env.MYSQL_HOST,
-         port: process.env.MYSQL_PORT,
-         user: process.env.MYSQL_USER,
-         password: process.env.MYSQL_PASSWORD,
-         database: process.env.MYSQL_DATABASE,
-      };
+## ⚙️ 2. Configurar `package.json`
 
-      const conn = await mysql.createConnection(connData);
-      await conn.connect();
+En la sección `"scripts"` de tu `package.json`, añade:
 
-      return conn;
-   }
-   ```
+```json
+"scripts": {
+  "start": "node src/index.js",
+  "dev": "node --watch src/index.js"
+}
+```
 
-5. Añadimos un endpoint (`server.method('/ruta', (req,res) =>{})`) por cada acción que queramos realizar por cada ruta que representa un concepto de nuestra App o una tabla de nuestra base de datos.
+> Asegúrate de no eliminar otras propiedades como `"test"` y de usar comas correctamente.
+
+---
+
+## 📦 3. Instalar dependencias
+
+Instala las dependencias necesarias:
+
+```bash
+npm install express cors mysql2 dotenv
+```
+
+### Dependencias adicionales según necesidades:
+
+- Autenticación:
+  ```bash
+  npm install bcrypt jsonwebtoken
+  ```
+
+- Motor de plantillas (si usas vistas con HTML dinámico):
+  ```bash
+  npm install ejs
+  ```
+
+---
+
+## 🌐 4. Configurar el servidor Express
+
+Edita `src/index.js` con el siguiente contenido mínimo:
+
+```js
+const express = require('express');
+const cors = require('cors');
+const mysql = require('mysql2/promise');
+require('dotenv').config();
+
+const server = express();
+
+// Configuración
+server.use(cors());
+server.use(express.json({ limit: '25mb' }));
+
+// Puerto
+const port = 4000;
+server.listen(port, () => {
+  console.log(`✅ Servidor iniciado en http://localhost:${port}`);
+});
+```
+
+---
+
+## 🔐 5. Configurar las variables de entorno
+
+Crea un archivo `.env` en la raíz del proyecto:
+
+```env
+MYSQL_HOST='localhost'
+MYSQL_PORT='3306'
+MYSQL_USER='tu_usuario'
+MYSQL_PASSWORD='tu_contraseña'
+MYSQL_DATABASE='nombre_base_de_datos'
+```
+
+> Reemplaza los valores por los reales de tu entorno local o remoto (como Aiven).
+
+---
+
+## 🔌 6. Conexión con MySQL
+
+Agrega esta función en `index.js` o en un archivo separado (`db.js`):
+
+```js
+async function getConnection() {
+  const connData = {
+    host: process.env.MYSQL_HOST,
+    port: process.env.MYSQL_PORT,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+  };
+
+  const conn = await mysql.createConnection(connData);
+  await conn.connect();
+  return conn;
+}
+```
+
+---
+
+## 🚀 7. Crear tus endpoints
+
+Agrega un endpoint por cada funcionalidad o tabla. Ejemplo: obtener una frase por ID:
+
+```js
+server.get('/api/frases/:id', async (req, res) => {
+  const conn = await getConnection();
+
+  try {
+    const [resultado] = await conn.query(
+      `SELECT texto FROM frases WHERE id = ?;`,
+      [req.params.id]
+    );
+
+    if (resultado.length === 0) {
+      res.status(404).json({ error: 'Frase no encontrada' });
+    } else {
+      res.json(resultado[0]);
+    }
+  } catch (error) {
+    console.error('Error al obtener la frase:', error);
+    res.status(500).json({ error: 'Error interno' });
+  } finally {
+    await conn.end();
+  }
+});
+```
+
+---
+
+## 🧪 8. Ejecutar el servidor
+
+### En modo desarrollo:
+```bash
+npm run dev
+```
+
+### En modo producción:
+```bash
+npm start
+```
+
+Abre en el navegador:  
+[http://localhost:4000](http://localhost:4000)
+
+---
+
+## ✅ Recomendaciones
+
+- Usa Postman o Thunder Client para probar tus endpoints.
+- Usa `console.log()` para depurar valores como `req.body` o `req.params`.
+- Mantén los errores controlados con `try...catch` para evitar que el servidor se caiga.
