@@ -32,6 +32,70 @@ async function getConnection() {
 }
 
 //ENDPOINTS API
+//POST - New sentence (marca_tiempo = null)
+ server.post('/api/frases', async (req, res) => {
+    const conn = await getConnection();
+    const [resultado] = await conn.execute(`
+        INSERT INTO frases (texto, descripcion, fk_id_personajes)
+            VALUES (?, ?, ?);`,
+            [req.body.texto, req.body.descripcion, req.body.fk_id_personajes]
+    );
+    await conn.end();
+    res.json(resultado);
+ });
+
+//GET - Lista de frases (con info pj y titulo del capitulo)
+server.get('/api/frases', async (req, res) => {
+    const conn = await getConnection();
+    const [resultado] = await conn.query(`
+        SELECT texto, fk_id_personajes, b.nombre, b.apellidos, b.ocupacion, c.titulo
+            FROM frases a
+                JOIN personajes b
+                    ON (a.fk_id_personajes = b.id_personajes) 
+                LEFT JOIN capitulos c 
+                    ON (a.id = c.frases_id);`
+    );
+    await conn.end();
+    res.json(resultado);
+});
+
+//GET - Obtener una frase específica (frase de lisa)
+server.get('/api/frases/12', async (req, res) => {
+    const conn = await getConnection();
+    const [resultado] = await conn.query(`
+        SELECT texto
+            FROM frases 
+                WHERE id = 12;`
+    );
+    await conn.end();
+    res.json(resultado);
+});
+
+//PUT - Actualizar frase existente****sinacabar
+server.put('/api/personajes/:id', async (req, res) => {
+    const conn = await getConnection();
+    const [resultado] = await conn.execute(`
+    UPDATE frases
+        SET id=?, texto=?
+            WHERE idPersonajes=?;`,
+        [req.body.texto]
+    );
+    await conn.end();
+
+    res.json(resultado);
+});
+
+//DELETE - Borrar una frase
+server.delete('/api/frases/:id', async (req, res) => {
+    const conn = await getConnection();
+    const [resultado] = await conn.execute(`
+    DELETE FROM frases
+        WHERE id=?;`,
+        [req.params.id]
+    );
+    await conn.end();
+    res.json(resultado);
+    });
 
 //End: Error 404
 server.use(/.*/, (req, res) => {
