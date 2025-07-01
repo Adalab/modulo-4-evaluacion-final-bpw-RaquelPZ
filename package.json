@@ -1,0 +1,30 @@
+{
+  "name": "ev4_rpz_sims",
+  "version": "1.0.0",
+  "description": "buenas tardes ivan",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adalab/modulo-4-evaluacion-final-bpw-RaquelPZ.git"
+  },
+  "keywords": [
+    "mysql"
+  ],
+  "author": "rachel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Adalab/modulo-4-evaluacion-final-bpw-RaquelPZ/issues"
+  },
+  "homepage": "https://github.com/Adalab/modulo-4-evaluacion-final-bpw-RaquelPZ#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1"
+  }
+}
