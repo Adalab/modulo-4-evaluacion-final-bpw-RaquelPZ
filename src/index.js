@@ -32,7 +32,7 @@ async function getConnection() {
 }
 
 //ENDPOINTS API
-//POST - New sentence (marca_tiempo = null)
+//POST - New sentence (marca_tiempo = null) -
  server.post('/api/frases', async (req, res) => {
     const conn = await getConnection();
     const [resultado] = await conn.execute(`
@@ -44,7 +44,7 @@ async function getConnection() {
     res.json(resultado);
  });
 
-//GET - Lista de frases (con info pj y titulo del capitulo)
+//GET - Lista de frases (con info pj y titulo del capitulo) -
 server.get('/api/frases', async (req, res) => {
     const conn = await getConnection();
     const [resultado] = await conn.query(`
@@ -59,7 +59,7 @@ server.get('/api/frases', async (req, res) => {
     res.json(resultado);
 });
 
-//GET - Obtener una frase específica (frase de lisa)
+//GET - Obtener una frase específica (frase de lisa) -
 server.get('/api/frases/12', async (req, res) => {
     const conn = await getConnection();
     const [resultado] = await conn.query(`
@@ -71,21 +71,33 @@ server.get('/api/frases/12', async (req, res) => {
     res.json(resultado);
 });
 
-//PUT - Actualizar frase existente****sinacabar
-server.put('/api/personajes/:id', async (req, res) => {
+//GET - Obtener una frase específica
+server.get('/api/frases/:id', async (req, res) => {
     const conn = await getConnection();
-    const [resultado] = await conn.execute(`
-    UPDATE frases
-        SET id=?, texto=?
-            WHERE idPersonajes=?;`,
-        [req.body.texto]
+    const [resultado] = await conn.query(`
+        SELECT texto
+            FROM frases 
+                WHERE id = ?;`,
+                [req.params.id]
     );
     await conn.end();
-
     res.json(resultado);
 });
 
-//DELETE - Borrar una frase
+//PUT - Actualizar frase existente -
+server.put('/api/frases/:id', async (req, res) => {
+    const conn = await getConnection();
+    const [resultado] = await conn.execute(`
+    UPDATE frases
+        SET texto = ?
+            WHERE id = ?;`,
+        [req.body.texto, req.params.id]
+    );
+    await conn.end();
+    res.json(resultado);
+});
+
+//DELETE - Borrar una frase -
 server.delete('/api/frases/:id', async (req, res) => {
     const conn = await getConnection();
     const [resultado] = await conn.execute(`
